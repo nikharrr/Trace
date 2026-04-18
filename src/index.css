@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+body {
+  font-family: "Playfair Display", serif;
+}
+
+@keyframes introTextFade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+.intro-fade-text {
+  opacity: 1;
+  animation: introTextFade 4s ease-out 5s forwards;
+}
