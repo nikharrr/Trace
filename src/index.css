@@ -1,19 +1,25 @@
 @import "tailwindcss";
 
+:root {
+  font-family: "Georgia", "Times New Roman", serif;
+  color: #2f3a4a;
+  background: #d9e6ef;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-  font-family: "Playfair Display", serif;
-}
-
-@keyframes introTextFade {
-  from {
-    opacity: 1;
-  }
-  to {
-    opacity: 0.5;
-  }
-}
-
-.intro-fade-text {
-  opacity: 1;
-  animation: introTextFade 4s ease-out 5s forwards;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.55), transparent 35%),
+    radial-gradient(circle at bottom, rgba(186, 206, 222, 0.45), transparent 40%),
+    linear-gradient(180deg, #bdd1df 0%, #d9e6ef 45%, #edf4f8 100%);
+  color: #2f3a4a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

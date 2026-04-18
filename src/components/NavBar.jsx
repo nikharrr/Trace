@@ -3,8 +3,9 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function NavBar() {
+  const [profileInitial, setProfileInitial] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [profileInitial, setProfileInitial] = useState("U");
+
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
@@ -20,11 +21,13 @@ export default function NavBar() {
   }, []);
 
   useEffect(() => {
-    let isMounted = true;
-
     const loadProfileInitial = async () => {
       const { data: userData, error: userError } = await supabase.auth.getUser();
-      if (userError || !userData?.user || !isMounted) return;
+
+      if (userError || !userData?.user) {
+        setProfileInitial("");
+        return;
+      }
 
       const user = userData.user;
 
@@ -32,7 +35,7 @@ export default function NavBar() {
         .from("profiles")
         .select("full_name")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       const nameFromProfile = profile?.full_name?.trim();
       const nameFromMetadata = user.user_metadata?.full_name?.trim();
@@ -41,15 +44,19 @@ export default function NavBar() {
       const seed = nameFromProfile || nameFromMetadata || nameFromEmail || "U";
       const first = seed.charAt(0).toUpperCase();
 
-      if (isMounted) {
-        setProfileInitial(first);
-      }
+      setProfileInitial(first);
     };
 
     loadProfileInitial();
 
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(() => {
+      loadProfileInitial();
+    });
+
     return () => {
-      isMounted = false;
+      subscription.unsubscribe();
     };
   }, []);
 
@@ -60,16 +67,19 @@ export default function NavBar() {
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
+
     if (error) {
       alert(error.message);
       return;
     }
+
     setIsOpen(false);
+    setProfileInitial("");
     navigate("/");
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/40 bg-white/70 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 bg-transparent">
       <nav className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 md:px-6">
         <NavLink
           to="/"
@@ -84,7 +94,7 @@ export default function NavBar() {
             onClick={() => setIsOpen((prev) => !prev)}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-900 text-sm font-semibold text-white"
           >
-            {profileInitial}
+            {profileInitial || "U"}
           </button>
 
           {isOpen && (

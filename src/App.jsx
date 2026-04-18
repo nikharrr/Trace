@@ -1,4 +1,3 @@
-
 import "./App.css";
 import { useState } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
@@ -8,6 +7,7 @@ import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import AppLayout from "./layouts/AppLayout";
 import IntroVideo from "./components/IntroVideo";
+import Journey from "./pages/Journey";
 
 function App() {
   const [showIntro, setShowIntro] = useState(
@@ -27,13 +27,14 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-         
+        <Route path="/signup" element={<SignUp />} />
+
         <Route element={<AppLayout />}>
-           <Route path="/dashboard" element={<Dashboard />} />
-           <Route path="/profile" element={<Profile />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/journey" element={<Journey />} />
         </Route>
-        
+
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
