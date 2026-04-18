@@ -39,6 +39,12 @@ jobs:
           VITE_SUPABASE_KEY: ${{ secrets.VITE_SUPABASE_KEY }}
         run: npm run build
 
+      - name: Ensure Public Assets In Dist
+        run: |
+          cp -f public/manifest.webmanifest dist/manifest.webmanifest
+          cp -f public/favicon.svg dist/favicon.svg
+          cp -f public/intro.mp4 dist/intro.mp4
+
       - name: Add SPA Fallback
         run: cp dist/index.html dist/404.html
 
