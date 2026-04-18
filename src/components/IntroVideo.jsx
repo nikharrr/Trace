@@ -25,7 +25,7 @@ export default function IntroVideo({ onEnded }) {
         playsInline
         onEnded={onEnded}
       >
-        <source src="/intro.mp4" type="video/mp4" />
+        <source src={`${import.meta.env.BASE_URL}intro.mp4`} type="video/mp4" />
       </video>
 
       {/* TEXT OVERLAY */}

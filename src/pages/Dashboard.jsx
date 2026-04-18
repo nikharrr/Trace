@@ -1,9 +1,20 @@
 import JourneyLane from "../components/JourneyLane";
+import videoFitness from "../assets/161071-822582138_medium.mp4";
+import videoTravel from "../assets/7824464-uhd_2160_3840_30fps.mp4";
+import videoStudy from "../assets/12087049_1080_1920_60fps.mp4";
+import videoCoding from "../assets/12376890_1440_2560_30fps.mp4";
+import videoReading from "../assets/13182629_2160_3840_24fps.mp4";
 
 const journeys = [
- { id: 1, title: "Fitness", video: "src/assets/161071-822582138_medium.mp4" }, { id: 2, title: "Travel", video: "src/assets/7824464-uhd_2160_3840_30fps.mp4" }, { id: 3, title: "Study", video: "src/assets/12087049_1080_1920_60fps.mp4" }, { id: 4, title: "Coding", video: "src/assets/12376890_1440_2560_30fps.mp4" }, { id: 5, title: "Reading", video: "src/assets/13182629_2160_3840_24fps.mp4" },
-  { id: 6, title: "Coding", video: "src/assets/12376890_1440_2560_30fps.mp4" }, { id: 7, title: "Reading", video: "src/assets/13182629_2160_3840_24fps.mp4" },
-   { id: 4, title: "Coding", video: "src/assets/12376890_1440_2560_30fps.mp4" }, { id: 5, title: "Reading", video: "src/assets/13182629_2160_3840_24fps.mp4" },
+  { id: 1, title: "Fitness", video: videoFitness },
+  { id: 2, title: "Travel", video: videoTravel },
+  { id: 3, title: "Study", video: videoStudy },
+  { id: 4, title: "Coding", video: videoCoding },
+  { id: 5, title: "Reading", video: videoReading },
+  { id: 6, title: "Coding", video: videoCoding },
+  { id: 7, title: "Reading", video: videoReading },
+  { id: 8, title: "Coding", video: videoCoding },
+  { id: 9, title: "Reading", video: videoReading },
 ];
 
 export default function Dashboard() {
