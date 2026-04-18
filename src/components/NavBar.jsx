@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "../lib/SupabaseClient";
 
 export default function NavBar() {
   const [profileInitial, setProfileInitial] = useState("");
