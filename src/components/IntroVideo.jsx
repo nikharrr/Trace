@@ -7,6 +7,16 @@ export default function IntroVideo({ onEnded }) {
         </h1>
       </div>
 
+      <div className="absolute right-5 top-5 z-20">
+        <button
+          type="button"
+          onClick={onEnded}
+          className="rounded-full border border-white/60 bg-black/30 px-4 py-2 text-sm font-medium text-white backdrop-blur hover:bg-black/45"
+        >
+          Skip
+        </button>
+      </div>
+
       {/* VIDEO */}
       <video
         className="h-full w-full object-cover"

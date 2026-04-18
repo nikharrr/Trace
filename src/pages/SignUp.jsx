@@ -1,11 +1,65 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabaseClient";
 
 export default function SignUp() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const handleSignUp = async () => {
+    if (!name || !email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          },
+        },
+      });
+
+      if (error) {
+        alert(error.message);
+        return;
+      }
+
+      const user = data?.user;
+
+      if (!user) {
+        alert("Signup succeeded, but user data was not returned.");
+        return;
+      }
+
+      const { error: profileError } = await supabase.from("profiles").insert({
+        id: user.id,
+        full_name: name,
+        username : user.email,
+      });
+
+      if (profileError) {
+        alert(profileError.message);
+        return;
+      }
+
+      alert("Account created successfully!");
+      navigate("/");
+    } catch (err) {
+      alert("Something went wrong");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
@@ -48,9 +102,11 @@ export default function SignUp() {
 
           <button
             type="button"
-            className="w-full py-3 rounded-full bg-gradient-to-b from-gray-900 to-gray-700 text-white font-medium shadow-lg"
+            onClick={handleSignUp}
+            disabled={loading}
+            className="w-full py-3 rounded-full bg-gradient-to-b from-gray-900 to-gray-700 text-white font-medium shadow-lg disabled:opacity-60"
           >
-            Create Account
+            {loading ? "Creating..." : "Create Account"}
           </button>
         </div>
 
