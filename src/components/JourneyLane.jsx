@@ -31,9 +31,10 @@ export default function JourneyLane({
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onClick={handleClick}
-      className="relative h-full w-[20vw] shrink-0 overflow-hidden border-r border-white/20 
+      className="relative h-full w-[25vw] shrink-0 overflow-hidden border-r border-white/20 
       transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
-      brightness-80 hover:brightness-100 hover:w-[40vw] cursor-pointer"
+      flex-[1] hover:flex-[3]   /* 🔥 KEY */
+      brightness-80  hover:w-[40vw] cursor-pointer"
     >
       <video
         ref={localVideoRef}
@@ -43,7 +44,7 @@ export default function JourneyLane({
         playsInline
       />
 
-      <div className="absolute inset-0 bg-black/40 hover:bg-black/10 transition-all duration-300" />
+      <div className="absolute inset-0 transition-all duration-300" />
     </div>
   );
 }
