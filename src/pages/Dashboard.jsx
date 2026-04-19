@@ -1,24 +1,66 @@
+import { useEffect, useState } from "react";
 import JourneyLane from "../components/JourneyLane";
-import videoFitness from "../assets/161071-822582138_medium.mp4";
-import videoTravel from "../assets/7824464-uhd_2160_3840_30fps.mp4";
-import videoStudy from "../assets/12087049_1080_1920_60fps.mp4";
-import videoCoding from "../assets/12376890_1440_2560_30fps.mp4";
-import videoReading from "../assets/13182629_2160_3840_24fps.mp4";
-
-const journeys = [
-  { id: 1, title: "Fitness", video: videoFitness },
-  { id: 2, title: "Travel", video: videoTravel },
-  { id: 3, title: "Study", video: videoStudy },
-  { id: 4, title: "Coding", video: videoCoding },
-  { id: 5, title: "Reading", video: videoReading },
-  { id: 6, title: "Coding", video: videoCoding },
-  { id: 7, title: "Reading", video: videoReading },
-  { id: 8, title: "Coding", video: videoCoding },
-  { id: 9, title: "Reading", video: videoReading },
-];
+import { loopFirstSeconds } from "../utils/videoPlayback";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "../lib/SupabaseClient";
 
 export default function Dashboard() {
-  // split into groups of 4
+  const navigate = useNavigate();
+  const [journeys, setJourneys] = useState([]);
+  const [loadingJourneys, setLoadingJourneys] = useState(true);
+  const [loadError, setLoadError] = useState("");
+
+  useEffect(() => {
+    let isActive = true;
+
+    const loadJourneys = async () => {
+      setLoadingJourneys(true);
+      setLoadError("");
+
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        if (!isActive) return;
+        setJourneys([]);
+        setLoadingJourneys(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("journeys")
+        .select("id, title, cover_video, cover_image, created_at")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (!isActive) return;
+
+      if (error) {
+        setLoadError(error.message);
+        setJourneys([]);
+        setLoadingJourneys(false);
+        return;
+      }
+
+      const mappedJourneys = (data || []).map((item) => ({
+        id: item.id,
+        title: item.title || "Journey",
+        video: item.cover_video || "",
+        image: item.cover_image || "",
+      }));
+
+      setJourneys(mappedJourneys.filter((item) => item.video));
+      setLoadingJourneys(false);
+    };
+
+    loadJourneys();
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
   const sections = [];
   for (let i = 0; i < journeys.length; i += 4) {
     sections.push(journeys.slice(i, i + 4));
@@ -26,7 +68,7 @@ export default function Dashboard() {
 
   return (
     <div className="bg-black text-white">
-          {/* navbar */}
+      {/* navbar */}
       <div className="absolute inset-x-0 top-0 z-30">
         <div className="bg-gradient-to-b from-black/85 via-black/55 to-transparent">
           <div className="flex h-20 items-center justify-between px-6 md:px-10">
@@ -36,9 +78,14 @@ export default function Dashboard() {
               </h1>
 
               <div className="hidden md:flex items-center gap-6 text-sm font-medium text-white/90">
-                <button className="hover:text-white">Explore</button>
+                
                 <button className="hover:text-white">My List</button>
-                <button className="hover:text-white">Create</button>
+                <button
+                  className="hover:text-white"
+                  onClick={() => navigate("/create-journey")}
+                >
+                  Create
+                </button>
               </div>
             </div>
 
@@ -52,35 +99,65 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      
-      {/* FIRST SCREEN (lanes) */}
+
+      {/* first screen */}
       <div className="h-screen flex overflow-hidden">
-        {sections[0]?.map((j) => (
-          <JourneyLane key={j.id} video={j.video} />
-        ))}
+        {loadingJourneys ? (
+          <div className="flex w-full items-center justify-center text-white/70">
+            Loading journeys...
+          </div>
+        ) : sections[0]?.length ? (
+          sections[0].map((j) => (
+            <JourneyLane
+              key={j.id}
+              id={j.id}
+              title={j.title}
+              video={j.video}
+              image={j.image}
+            />
+          ))
+        ) : (
+          <div className="flex w-full flex-col items-center justify-center gap-4 px-6 text-center">
+            <p className="text-lg text-white/85">
+              {loadError ? `Could not load journeys: ${loadError}` : "No journeys yet."}
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate("/create-journey")}
+              className="rounded-full bg-white px-5 py-2 text-sm font-semibold text-black"
+            >
+              Create your first journey
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* LOOP remaining sections */}
+      {/* remaining sections */}
       {sections.slice(1).map((group, index) => (
         <div key={index}>
-          
-          {/* FULL VIDEO */}
-          <div className="h-screen w-full relative">
+          <div className="relative h-screen w-full">
             <video
               src={group[0].video}
-              className="w-full h-full object-cover"
+              poster={group[0].image}
+              className="h-full w-full object-cover"
               autoPlay
               muted
               loop
               playsInline
+              preload="metadata"
+              onTimeUpdate={loopFirstSeconds}
             />
-            <div className="absolute inset-0 " />
           </div>
 
-          {/* NEXT LANES */}
           <div className="h-screen flex overflow-hidden">
             {group.map((j) => (
-              <JourneyLane key={j.id} video={j.video} />
+              <JourneyLane
+                key={j.id}
+                id={j.id}
+                title={j.title}
+                video={j.video}
+                image={j.image}
+              />
             ))}
           </div>
         </div>

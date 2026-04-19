@@ -8,6 +8,7 @@ import Profile from "./pages/Profile";
 import AppLayout from "./layouts/AppLayout";
 import IntroVideo from "./components/IntroVideo";
 import Journey from "./pages/Journey";
+import CreateJourney from "./pages/CreateJourney";
 
 function App() {
   const [showIntro, setShowIntro] = useState(
@@ -33,6 +34,7 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/journey" element={<Journey />} />
+          <Route path="/create-journey" element={<CreateJourney />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/" replace />} />

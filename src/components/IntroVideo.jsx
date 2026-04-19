@@ -1,4 +1,16 @@
+import { useEffect, useState } from "react";
+
 export default function IntroVideo({ onEnded }) {
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
+
+  useEffect(() => {
+    const frameId = requestAnimationFrame(() => {
+      setShouldLoadVideo(true);
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, []);
+
   return (
     <div className="fixed inset-0 bg-black">
       <div className="absolute inset-x-0 top-8 z-20 flex justify-center">
@@ -20,13 +32,17 @@ export default function IntroVideo({ onEnded }) {
       {/* VIDEO */}
       <video
         className="h-full w-full object-cover"
+        src={
+          shouldLoadVideo
+            ? `${import.meta.env.BASE_URL}intro.mp4`
+            : undefined
+        }
         autoPlay
         muted
         playsInline
+        preload={shouldLoadVideo ? "metadata" : "none"}
         onEnded={onEnded}
-      >
-        <source src={`${import.meta.env.BASE_URL}intro.mp4`} type="video/mp4" />
-      </video>
+      />
 
       {/* TEXT OVERLAY */}
       <div className="absolute inset-0 flex items-center justify-center px-6 text-center">
